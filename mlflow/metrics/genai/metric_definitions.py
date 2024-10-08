@@ -13,6 +13,7 @@ from mlflow.utils.class_utils import _get_class_from_string
 @experimental
 def answer_similarity(
     model: Optional[str] = None,
+    endpoint_url: Optional[str] = None,
     metric_version: Optional[str] = None,
     examples: Optional[List[EvaluationExample]] = None,
     metric_metadata: Optional[Dict[str, Any]] = None,
@@ -75,6 +76,7 @@ def answer_similarity(
         examples=examples,
         version=metric_version,
         model=model,
+        endpoint_url=endpoint_url,
         grading_context_columns=answer_similarity_class_module.grading_context_columns,
         parameters=answer_similarity_class_module.parameters,
         aggregations=["mean", "variance", "p90"],
@@ -86,6 +88,7 @@ def answer_similarity(
 @experimental
 def answer_correctness(
     model: Optional[str] = None,
+    endpoint_url: Optional[str] = None,
     metric_version: Optional[str] = None,
     examples: Optional[List[EvaluationExample]] = None,
     metric_metadata: Optional[Dict[str, Any]] = None,
@@ -147,6 +150,7 @@ def answer_correctness(
         examples=examples,
         version=metric_version,
         model=model,
+        endpoint_url=endpoint_url,
         grading_context_columns=answer_correctness_class_module.grading_context_columns,
         parameters=answer_correctness_class_module.parameters,
         aggregations=["mean", "variance", "p90"],
@@ -158,6 +162,7 @@ def answer_correctness(
 @experimental
 def faithfulness(
     model: Optional[str] = None,
+    endpoint_url: Optional[str] = None,
     metric_version: Optional[str] = _get_latest_metric_version(),
     examples: Optional[List[EvaluationExample]] = None,
     metric_metadata: Optional[Dict[str, Any]] = None,
@@ -218,6 +223,7 @@ def faithfulness(
         examples=examples,
         version=metric_version,
         model=model,
+        endpoint_url=endpoint_url,
         grading_context_columns=faithfulness_class_module.grading_context_columns,
         parameters=faithfulness_class_module.parameters,
         aggregations=["mean", "variance", "p90"],
@@ -229,6 +235,7 @@ def faithfulness(
 @experimental
 def answer_relevance(
     model: Optional[str] = None,
+    endpoint_url: Optional[str] = None,
     metric_version: Optional[str] = _get_latest_metric_version(),
     examples: Optional[List[EvaluationExample]] = None,
     metric_metadata: Optional[Dict[str, Any]] = None,
@@ -284,6 +291,7 @@ def answer_relevance(
         examples=examples,
         version=metric_version,
         model=model,
+        endpoint_url=endpoint_url,
         parameters=answer_relevance_class_module.parameters,
         aggregations=["mean", "variance", "p90"],
         greater_is_better=True,
@@ -293,6 +301,7 @@ def answer_relevance(
 
 def relevance(
     model: Optional[str] = None,
+    endpoint_url: Optional[str] = None,
     metric_version: Optional[str] = None,
     examples: Optional[List[EvaluationExample]] = None,
     metric_metadata: Optional[Dict[str, Any]] = None,
@@ -354,6 +363,7 @@ def relevance(
         examples=examples,
         version=metric_version,
         model=model,
+        endpoint_url=endpoint_url,
         grading_context_columns=relevance_class_module.grading_context_columns,
         parameters=relevance_class_module.parameters,
         aggregations=["mean", "variance", "p90"],

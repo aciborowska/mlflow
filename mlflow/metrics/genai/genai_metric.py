@@ -102,9 +102,10 @@ def _score_model_on_one_payload(
     payload,
     eval_model,
     parameters,
+    endpoint_url=None,
 ):
     try:
-        raw_result = model_utils.score_model_on_payload(eval_model, payload, parameters)
+        raw_result = model_utils.score_model_on_payload(eval_model, payload, endpoint_url=endpoint_url,eval_parameters=parameters)
         return _extract_score_and_justification(raw_result)
     except ImportError:
         raise
@@ -122,7 +123,7 @@ def _score_model_on_one_payload(
 
 
 def _score_model_on_payloads(
-    grading_payloads, model, parameters, max_workers
+    grading_payloads, model, parameters, max_workers, endpoint_url=None,
 ) -> Tuple[List[int], List[str]]:
     scores = [None] * len(grading_payloads)
     justifications = [None] * len(grading_payloads)
@@ -133,6 +134,7 @@ def _score_model_on_payloads(
                 payload,
                 model,
                 parameters,
+                endpoint_url=endpoint_url,
             ): indx
             for indx, payload in enumerate(grading_payloads)
         }
@@ -322,6 +324,7 @@ def make_genai_metric(
     examples: Optional[List[EvaluationExample]] = None,
     version: Optional[str] = _get_latest_metric_version(),
     model: Optional[str] = _get_default_model(),
+    endpoint_url: Optional[str] = None,
     grading_context_columns: Optional[Union[str, List[str]]] = None,
     include_input: bool = True,
     parameters: Optional[Dict[str, Any]] = None,
@@ -440,6 +443,7 @@ def make_genai_metric(
         "examples": examples,
         "version": version,
         "model": model,
+        "endpoint_url": endpoint_url,
         "grading_context_columns": grading_context_columns,
         "include_input": include_input,
         "parameters": parameters,
@@ -510,6 +514,7 @@ def make_genai_metric(
         grading_prompt,
         examples,
         model,
+        endpoint_url,
         *(parameters,) if parameters is not None else (),
     ).to_dict()
 
@@ -528,6 +533,7 @@ def make_genai_metric(
         inputs = inputs.to_list()
         eval_model = evaluation_context["model"]
         eval_parameters = evaluation_context["parameters"]
+        eval_endpoint_url= evaluation_context["endpoint_url"]
 
         # TODO: Save the metric definition in a yaml file for model monitoring
 
@@ -575,6 +581,7 @@ def make_genai_metric(
                     payload,
                     eval_model,
                     eval_parameters,
+                    endpoint_url=eval_endpoint_url,
                 ): indx
                 for indx, payload in enumerate(grading_payloads)
             }

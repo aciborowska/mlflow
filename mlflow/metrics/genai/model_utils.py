@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 
 # TODO: improve this name
-def score_model_on_payload(model_uri, payload, eval_parameters=None):
+def score_model_on_payload(model_uri, payload, endpoint_url=None, eval_parameters=None):
     """Call the model identified by the given uri with the given payload."""
 
     if eval_parameters is None:
@@ -18,7 +18,7 @@ def score_model_on_payload(model_uri, payload, eval_parameters=None):
     prefix, suffix = _parse_model_uri(model_uri)
 
     if prefix == "openai":
-        return _call_openai_api(suffix, payload, eval_parameters)
+        return _call_openai_api(suffix, endpoint_url, payload, eval_parameters)
     elif prefix == "gateway":
         return _call_gateway_api(suffix, payload, eval_parameters)
     elif prefix == "endpoints":
@@ -45,8 +45,8 @@ def _parse_model_uri(model_uri):
     return scheme, path
 
 
-def _call_openai_api(openai_uri, payload, eval_parameters):
-    if "OPENAI_API_KEY" not in os.environ:
+def _call_openai_api(openai_uri, endpoint_url, payload, eval_parameters):
+    if "OPENAI_API_KEY" not in os.environ and endpoint_url is None:
         raise MlflowException(
             "OPENAI_API_KEY environment variable not set",
             error_code=INVALID_PARAMETER_VALUE,
@@ -95,7 +95,7 @@ def _call_openai_api(openai_uri, payload, eval_parameters):
         )
     else:
         payload = {"model": openai_uri, **payload}
-        request_url = REQUEST_URL_CHAT
+        request_url = REQUEST_URL_CHAT if endpoint_url is None else endpoint_url
 
     try:
         resp = process_api_requests(
